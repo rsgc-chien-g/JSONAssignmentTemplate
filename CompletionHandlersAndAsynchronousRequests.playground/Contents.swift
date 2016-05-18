@@ -14,7 +14,7 @@ class ViewController : UIViewController {
         // Print the provided data
         print("")
         print("====== the data provided to parseMyJSON is as follows ======")
-        print(theData)
+        //print(theData)
         
         // De-serializing JSON can throw errors, so should be inside a do-catch structure
         do {
@@ -25,20 +25,71 @@ class ViewController : UIViewController {
             //
             let json = try NSJSONSerialization.JSONObjectWithData(theData, options: NSJSONReadingOptions.AllowFragments) as! AnyObject
             
-            // Print retrieved JSON
-            print("")
-            print("====== the retrieved JSON is as follows ======")
-            print(json)
-            
             // Now we can parse this...
             print("")
             print("Now, add your parsing code here...")
             
+            
+            if let structure = json as? [String : AnyObject] {
+                if let name = (structure["name"]){
+                print(name)
+                }
+                if let types = (structure["types"]) as? [AnyObject]{
+                    if let type = types[0] as? AnyObject{
+                        if let typeDetails = type as? [String : AnyObject]{
+                            print("the slot number is: \(type["slot"])")
+                            if let typeName = (typeDetails["type"]) as? [String : AnyObject]{
+                                print(typeName["name"])
+                            }
+                        }
+
+                    }
+                    
+                    
+                    
+                }
+                if let abilities = structure["abilities"] as? [String : AnyObject]{
+                    print("abilities has been binded as dictionary")
+                    if let ability = abilities["ability"] as? [String : AnyObject]{
+                        print("ability has been binded")
+                        print(ability)
+
+                    }
+                }
+                if let sprites = structure as? [String : AnyObject] {
+                        print("Default sprite")
+                    if let sprite = sprites["sprites"] as? [String : AnyObject] {
+                        print(sprite["front_default"])
+                        print(sprite["back_default"])
+                    
+                    }
+                    
+                }
+
+            }
+            
+//            if let sprites = json as? [String : AnyObject] {
+//                
+////                print("Game index :")
+////                print(sprites["sprites"])
+//                if let front = sprites["sprites"] as? [String : AnyObject] {
+//                    print("default sprite")
+//                    print(front["front_default"])
+//                    print(front["back_default"])
+//                }
+//                
+//                
+//                
+//            }
+            
+            
+
             // Now we can update the UI
             // (must be done asynchronously)
             dispatch_async(dispatch_get_main_queue()) {
                 self.jsonResult.text = "parsed JSON should go here"
-            }
+            
+                            }
             
         } catch let error as NSError {
             print ("Failed to load: \(error.localizedDescription)")
@@ -49,7 +100,7 @@ class ViewController : UIViewController {
     
     // Set up and begin an asynchronous request for JSON data
     func getMyJSON() {
-
+        
         // Define a completion handler
         // The completion handler is what gets called when this **asynchronous** network request is completed.
         // This is where we'd process the JSON retrieved
@@ -69,18 +120,18 @@ class ViewController : UIViewController {
                 
                 // If the request was successful, parse the given data
                 if r.statusCode == 200 {
-        
-                    // Show debug information (if a request was completed successfully)            
-                    print("")
-                    print("====== data from the request follows ======")
-                    print(data)
-                    print("")
-                    print("====== response codes from the request follows ======")
-                    print(response)
-                    print("")
-                    print("====== errors from the request follows ======")
-                    print(error)
-            
+                    
+//                    // Show debug information (if a request was completed successfully)
+//                    print("")
+//                    print("====== data from the request follows ======")
+//                    print(data)
+//                    print("")
+//                    print("====== response codes from the request follows ======")
+//                    print(response)
+//                    print("")
+//                    print("====== errors from the request follows ======")
+//                    print(error)
+                    
                     if let d = data {
                         
                         // Parse the retrieved data
@@ -131,10 +182,10 @@ class ViewController : UIViewController {
         // Sub-classes of UIViewController must invoke the superclass method viewDidLoad in their
         // own version of viewDidLoad()
         super.viewDidLoad()
-
+        
         // Make the view's background be gray
         view.backgroundColor = UIColor.lightGrayColor()
-
+        
         /*
          * Further define label that will show JSON data
          */
@@ -151,7 +202,7 @@ class ViewController : UIViewController {
         
         // Add the label to the superview
         view.addSubview(jsonResult)
-
+        
         /*
          * Add a button
          */
@@ -168,7 +219,7 @@ class ViewController : UIViewController {
         
         // Add the button into the super view
         view.addSubview(getData)
-
+        
         /*
          * Layout all the interface elements
          */
