@@ -35,11 +35,17 @@ class ViewController : UIViewController {
                 print(name)
                 }
                 if let types = (structure["types"]) as? [AnyObject]{
+                    
                     if let type = types[0] as? AnyObject{
                         if let typeDetails = type as? [String : AnyObject]{
                             print("the slot number is: \(type["slot"])")
                             if let typeName = (typeDetails["type"]) as? [String : AnyObject]{
-                                print(typeName["name"])
+                                
+                                if let typename = (typeName["name"]){
+                                    print (typename)
+                                }
+//                                print(typeName["name"])
+                                
                             }
                         }
 
@@ -48,13 +54,24 @@ class ViewController : UIViewController {
                     
                     
                 }
-                if let abilities = structure["abilities"] as? [String : AnyObject]{
-                    print("abilities has been binded as dictionary")
-                    if let ability = abilities["ability"] as? [String : AnyObject]{
-                        print("ability has been binded")
-                        print(ability)
-
+                if let abilities = structure["abilities"] as? [AnyObject]{
+                    
+                    // iterate over all the ability
+                    for ability in abilities {
+                        
+                        if let abilityDetail = ability as? AnyObject{
+                            print("ability detail has been binded")
+                            if let abilityName = abilityDetail["ability"] as? [String : AnyObject]{
+                                
+                                print(abilityName["name"])
+                                
+                            }
+                            
+                        }
                     }
+                    
+                    
+                    
                 }
                 if let sprites = structure as? [String : AnyObject] {
                         print("Default sprite")
