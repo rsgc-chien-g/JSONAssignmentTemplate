@@ -2,8 +2,12 @@
 
 import UIKit
 import XCPlayground
-
+var URL: String = "http://pokeapi.co/api/v2/pokemon/"
+var URLend: String = "/"
 class ViewController : UIViewController {
+    let inputGiven = UITextField(frame: CGRect(x: 0, y: 0, width: 300, height: 30))
+    
+    
     
     // Views that need to be accessible to all methods
     let jsonResult = UILabel()
@@ -103,21 +107,6 @@ class ViewController : UIViewController {
 
             }
             
-//            if let sprites = json as? [String : AnyObject] {
-//                
-////                print("Game index :")
-////                print(sprites["sprites"])
-//                if let front = sprites["sprites"] as? [String : AnyObject] {
-//                    print("default sprite")
-//                    print(front["front_default"])
-//                    print(front["back_default"])
-//                }
-//                
-//                
-//                
-//            }
-            
-            
 
             // Now we can update the UI
             // (must be done asynchronously)
@@ -156,16 +145,6 @@ class ViewController : UIViewController {
                 // If the request was successful, parse the given data
                 if r.statusCode == 200 {
                     
-//                    // Show debug information (if a request was completed successfully)
-//                    print("")
-//                    print("====== data from the request follows ======")
-//                    print(data)
-//                    print("")
-//                    print("====== response codes from the request follows ======")
-//                    print(response)
-//                    print("")
-//                    print("====== errors from the request follows ======")
-//                    print(error)
                     
                     if let d = data {
                         
@@ -179,30 +158,40 @@ class ViewController : UIViewController {
             }
             
         }
+        func createURL() -> (String?){
+            
+//            if let userInput = inputGiven.text{
+            let addr = URL + inputGiven.text! + URLend
+            print(addr)
+            return(addr)
+            
+        }
         
-        // Define a URL to retrieve a JSON file from
-        let address : String = "http://pokeapi.co/api/v2/pokemon/7/"
+        // Define a UR to retrieve a JSON file from
+        if let address = createURL(){
+            if let url = NSURL(string: address) {
+                
+                // We have an valid URL to work with
+                print(url)
+                
+                // Now we create a URL request object
+                let urlRequest = NSURLRequest(URL: url)
+                
+                // Now we need to create an NSURLSession object to send the request to the server
+                let config = NSURLSessionConfiguration.defaultSessionConfiguration()
+                let session = NSURLSession(configuration: config)
+                
+                // Now we create the data task and specify the completion handler
+                let task = session.dataTaskWithRequest(urlRequest, completionHandler: myCompletionHandler)
+                
+                // Finally, we tell the task to start (despite the fact that the method is named "resume")
+                task.resume()
+                
+            }
+        }
         
         // Try to make a URL request object
-        if let url = NSURL(string: address) {
-            
-            // We have an valid URL to work with
-            print(url)
-            
-            // Now we create a URL request object
-            let urlRequest = NSURLRequest(URL: url)
-            
-            // Now we need to create an NSURLSession object to send the request to the server
-            let config = NSURLSessionConfiguration.defaultSessionConfiguration()
-            let session = NSURLSession(configuration: config)
-            
-            // Now we create the data task and specify the completion handler
-            let task = session.dataTaskWithRequest(urlRequest, completionHandler: myCompletionHandler)
-            
-            // Finally, we tell the task to start (despite the fact that the method is named "resume")
-            task.resume()
-            
-        } else {
+         else {
             
             // The NSURL object could not be created
             print("Error: Cannot create the NSURL object.")
@@ -213,7 +202,7 @@ class ViewController : UIViewController {
     
     // This is the method that will run as soon as the view controller is created
     override func viewDidLoad() {
-        
+
         // Sub-classes of UIViewController must invoke the superclass method viewDidLoad in their
         // own version of viewDidLoad()
         super.viewDidLoad()
@@ -247,13 +236,48 @@ class ViewController : UIViewController {
         getData.addTarget(self, action: #selector(ViewController.getMyJSON), forControlEvents: UIControlEvents.TouchUpInside)
         
         // Set the button's title
-        getData.setTitle("Get my JSON!", forState: UIControlState.Normal)
+        getData.setTitle("Submit", forState: UIControlState.Normal)
         
         // Required to auto layout this button
         getData.translatesAutoresizingMaskIntoConstraints = false
         
         // Add the button into the super view
         view.addSubview(getData)
+        
+        // add text box
+        let UserInput = UILabel()
+        
+
+
+        // Set the label text and appearance
+        UserInput.text = "Pokédex#"
+        UserInput.font = UIFont.systemFontOfSize(24)
+        
+        // Required to autolayout this label.
+        UserInput.translatesAutoresizingMaskIntoConstraints = false
+        
+        // Add the amount label into the superview
+        view.addSubview(UserInput)
+        
+        /*
+         * Set up text field for the amount
+         */
+        // Set the label text and appearance
+        inputGiven.borderStyle = UITextBorderStyle.RoundedRect
+        inputGiven.font = UIFont.systemFontOfSize(15)
+        inputGiven.placeholder = "1-811"
+        inputGiven.backgroundColor = UIColor.whiteColor()
+        inputGiven.contentVerticalAlignment = UIControlContentVerticalAlignment.Center
+        inputGiven.textAlignment = NSTextAlignment.Center
+        
+        // Required to autolayout this field
+        inputGiven.translatesAutoresizingMaskIntoConstraints = false
+        
+        // Add the amount text field into the superview
+        view.addSubview(inputGiven)
+        
+        
+
         
         /*
          * Layout all the interface elements
@@ -268,11 +292,14 @@ class ViewController : UIViewController {
         // Create a dictionary of views that will be used in the layout constraints defined below
         let viewsDictionary : [String : AnyObject] = [
             "title": jsonResult,
-            "getData": getData]
+            "getData": getData,
+            "UserInput": UserInput,
+            "inputField": inputGiven
+            ]
         
         // Define the vertical constraints
         let verticalConstraints = NSLayoutConstraint.constraintsWithVisualFormat(
-            "V:|-50-[getData]-[title]",
+            "V:|-50-[UserInput]-[inputField]-[getData]-[title]",
             options: [],
             metrics: nil,
             views: viewsDictionary)
@@ -286,6 +313,9 @@ class ViewController : UIViewController {
     }
     
 }
+
+
+
 
 // Embed the view controller in the live view for the current playground page
 XCPlaygroundPage.currentPage.liveView = ViewController()
