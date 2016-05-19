@@ -5,12 +5,18 @@ import XCPlayground
 var URL: String = "http://pokeapi.co/api/v2/pokemon/"
 var URLend: String = "/"
 class ViewController : UIViewController {
+    
     let inputGiven = UITextField(frame: CGRect(x: 0, y: 0, width: 300, height: 30))
+    var JSONname = ""
+    var JSONtype: [String] = []
+//    var JSONability: [String] = []
+    var JSONsprite = ""
     
     
     
     // Views that need to be accessible to all methods
-    let jsonResult = UILabel()
+    let jsonName = UILabel()
+    let jsonType = UILabel()
     
     // If data is successfully retrieved from the server, we can parse it here
     func parseMyJSON(theData : NSData) {
@@ -32,18 +38,22 @@ class ViewController : UIViewController {
             // Now we can parse this...
             
             if let structure = json as? [String : AnyObject] {
+                
                 if let name = (structure["name"]){
+                JSONname = name as! String
                 print("The Pokémon's name is", name)
                 }
+                
                 if let types = (structure["types"]) as? [AnyObject]{
                     print ("This Pokémon is a", terminator: " ")
                     for type in types{
                         
                         if let typeDetails = type as? [String : AnyObject]{
-//                            print("the slot number is: \(type["slot"])")
                             if let typeName = (typeDetails["type"]) as? [String : AnyObject]{
                                 
                                 if let typename = (typeName["name"]){
+                                    JSONtype += [typename as! String]
+                                    
                                     print (typename, terminator:"")
                                     
                                 }
@@ -62,14 +72,16 @@ class ViewController : UIViewController {
                 
                 if let abilities = structure["abilities"] as? [AnyObject]{
                     print("This Pokémon's abilities are", terminator: " ")
-
                     // iterate over all the ability
                     for ability in abilities {
-                        
+                        var i = 0
                         if let abilityDetail = ability as? AnyObject{
                             if let abilityName = abilityDetail["ability"] as? [String : AnyObject]{
                                 if let abilityname = (abilityName["name"]){
+//                                    JSONability[i] = abilityname as! String
+                                    i += 1
                                     print(abilityname, terminator:" ")
+                                    
                                 }
                                 
                             }
@@ -111,7 +123,9 @@ class ViewController : UIViewController {
             // Now we can update the UI
             // (must be done asynchronously)
             dispatch_async(dispatch_get_main_queue()) {
-                self.jsonResult.text = "parsed JSON should go here"
+                
+                self.jsonName.text = self.JSONname
+                self.jsonType.text = self.JSONtype[1]
             
                             }
             
@@ -215,17 +229,30 @@ class ViewController : UIViewController {
          */
         
         // Set the label text and appearance
-        jsonResult.text = "..."
-        jsonResult.font = UIFont.systemFontOfSize(12)
-        jsonResult.numberOfLines = 0   // makes number of lines dynamic
+        jsonName.text = "..."
+        jsonName.font = UIFont.systemFontOfSize(12)
+        jsonName.numberOfLines = 0   // makes number of lines dynamic
         // e.g.: multiple lines will show up
-        jsonResult.textAlignment = NSTextAlignment.Center
+        jsonName.textAlignment = NSTextAlignment.Center
         
         // Required to autolayout this label
-        jsonResult.translatesAutoresizingMaskIntoConstraints = false
+        jsonName.translatesAutoresizingMaskIntoConstraints = false
         
         // Add the label to the superview
-        view.addSubview(jsonResult)
+        view.addSubview(jsonName)
+        
+        jsonType.font = UIFont.systemFontOfSize(12)
+        jsonType.numberOfLines = 0   // makes number of lines dynamic
+        // e.g.: multiple lines will show up
+        jsonType.textAlignment = NSTextAlignment.Center
+        
+        // Required to autolayout this label
+        jsonType.translatesAutoresizingMaskIntoConstraints = false
+        
+        // Add the label to the superview
+        view.addSubview(jsonType)
+        
+        
         
         /*
          * Add a button
@@ -291,10 +318,12 @@ class ViewController : UIViewController {
         
         // Create a dictionary of views that will be used in the layout constraints defined below
         let viewsDictionary : [String : AnyObject] = [
-            "title": jsonResult,
+            "title": jsonName,
             "getData": getData,
             "UserInput": UserInput,
-            "inputField": inputGiven
+            "inputField": inputGiven,
+//            "type": JSONtype,
+//            "ability": JSONability
             ]
         
         // Define the vertical constraints
