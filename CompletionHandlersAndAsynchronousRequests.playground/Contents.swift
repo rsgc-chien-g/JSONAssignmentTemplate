@@ -26,16 +26,13 @@ class ViewController : UIViewController {
             let json = try NSJSONSerialization.JSONObjectWithData(theData, options: NSJSONReadingOptions.AllowFragments) as! AnyObject
             
             // Now we can parse this...
-            print("")
-            print("Now, add your parsing code here...")
-            
             
             if let structure = json as? [String : AnyObject] {
                 if let name = (structure["name"]){
-                print(name)
+                print("The Pokémon's name is", name)
                 }
                 if let types = (structure["types"]) as? [AnyObject]{
-        
+                    print ("This Pokémon is a", terminator: " ")
                     for type in types{
                         
                         if let typeDetails = type as? [String : AnyObject]{
@@ -43,15 +40,15 @@ class ViewController : UIViewController {
                             if let typeName = (typeDetails["type"]) as? [String : AnyObject]{
                                 
                                 if let typename = (typeName["name"]){
-                                    print ("This Pokémon is a")
-                                    print (typename)
-                                    print ("type")
+                                    print (typename, terminator:"")
+                                    
                                 }
                                 
                             }
                         }
                         
                     }
+                    print (" type")
 
                         
                     }
@@ -60,38 +57,46 @@ class ViewController : UIViewController {
                     
                 
                 if let abilities = structure["abilities"] as? [AnyObject]{
-                    
+                    print("This Pokémon's abilities are", terminator: " ")
+
                     // iterate over all the ability
                     for ability in abilities {
                         
                         if let abilityDetail = ability as? AnyObject{
                             if let abilityName = abilityDetail["ability"] as? [String : AnyObject]{
                                 if let abilityname = (abilityName["name"]){
-                                    print("This Pokémon's abilities are")
-                                    print(abilityname)
+                                    print(abilityname, terminator:" ")
                                 }
                                 
                             }
                             
                         }
                     }
+                    print(terminator:"\n")
                     
                     
                     
                 }
                 if let sprites = structure as? [String : AnyObject] {
-                        print("Default sprite")
+                    
                     if let sprite = sprites["sprites"] as? [String : AnyObject] {
 
                         if let front = sprite["front_default"]{
-                        print(front["front_default"])
+                            print("Default sprite front")
+                            print(front)
                         }
-                        if let back = sprite["back_default"]{
-                            print(back["back_default"])
+                        print("Default sprite back")
+                            if let back = sprite["back_default"]{
+                            print(back)
                         }
-//                        if let frontFemale = sprite["front_female"]{
-//                            print(frontFemale["front_female"])
-//                        }
+                        if let frontShiny = sprite["front_shiny"]{
+                            print("Shiny sprite front")
+                            print(frontShiny)
+                        }
+                        if let backShiny = sprite["back_shiny"]{
+                            print("Shiny sprite back")
+                            print(backShiny)
+                        }
                     }
                     
                 }
@@ -176,7 +181,7 @@ class ViewController : UIViewController {
         }
         
         // Define a URL to retrieve a JSON file from
-        let address : String = "http://pokeapi.co/api/v2/pokemon/6/"
+        let address : String = "http://pokeapi.co/api/v2/pokemon/7/"
         
         // Try to make a URL request object
         if let url = NSURL(string: address) {
