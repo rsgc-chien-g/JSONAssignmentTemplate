@@ -35,35 +35,41 @@ class ViewController : UIViewController {
                 print(name)
                 }
                 if let types = (structure["types"]) as? [AnyObject]{
-                    
-                    if let type = types[0] as? AnyObject{
+        
+                    for type in types{
+                        
                         if let typeDetails = type as? [String : AnyObject]{
-                            print("the slot number is: \(type["slot"])")
+//                            print("the slot number is: \(type["slot"])")
                             if let typeName = (typeDetails["type"]) as? [String : AnyObject]{
                                 
                                 if let typename = (typeName["name"]){
+                                    print ("This Pokémon is a")
                                     print (typename)
+                                    print ("type")
                                 }
-//                                print(typeName["name"])
                                 
                             }
                         }
-
+                        
                     }
+
+                        
+                    }
+                
                     
                     
-                    
-                }
+                
                 if let abilities = structure["abilities"] as? [AnyObject]{
                     
                     // iterate over all the ability
                     for ability in abilities {
                         
                         if let abilityDetail = ability as? AnyObject{
-                            print("ability detail has been binded")
                             if let abilityName = abilityDetail["ability"] as? [String : AnyObject]{
-                                
-                                print(abilityName["name"])
+                                if let abilityname = (abilityName["name"]){
+                                    print("This Pokémon's abilities are")
+                                    print(abilityname)
+                                }
                                 
                             }
                             
@@ -76,9 +82,16 @@ class ViewController : UIViewController {
                 if let sprites = structure as? [String : AnyObject] {
                         print("Default sprite")
                     if let sprite = sprites["sprites"] as? [String : AnyObject] {
-                        print(sprite["front_default"])
-                        print(sprite["back_default"])
-                    
+
+                        if let front = sprite["front_default"]{
+                        print(front["front_default"])
+                        }
+                        if let back = sprite["back_default"]{
+                            print(back["back_default"])
+                        }
+//                        if let frontFemale = sprite["front_female"]{
+//                            print(frontFemale["front_female"])
+//                        }
                     }
                     
                 }
@@ -163,7 +176,7 @@ class ViewController : UIViewController {
         }
         
         // Define a URL to retrieve a JSON file from
-        let address : String = "http://pokeapi.co/api/v2/pokemon/7/"
+        let address : String = "http://pokeapi.co/api/v2/pokemon/6/"
         
         // Try to make a URL request object
         if let url = NSURL(string: address) {
