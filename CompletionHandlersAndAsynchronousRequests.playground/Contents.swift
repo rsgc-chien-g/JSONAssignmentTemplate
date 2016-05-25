@@ -4,14 +4,31 @@ import UIKit
 import XCPlayground
 var URL: String = "http://pokeapi.co/api/v2/pokemon/"
 var URLend: String = "/"
+
+extension UIView
+{
+    func centerHorizontallyInSuperview()
+    {
+        let c: NSLayoutConstraint = NSLayoutConstraint(item: self,
+                                                       attribute: NSLayoutAttribute.CenterX,
+                                                       relatedBy: NSLayoutRelation.Equal,
+                                                       toItem: self.superview,
+                                                       attribute: NSLayoutAttribute.CenterX,
+                                                       multiplier:1,
+                                                       constant: 0)
+        
+        // Add this constraint to the superview
+        self.superview?.addConstraint(c)
+    }
+}
 class ViewController : UIViewController {
     
     let inputGiven = UITextField(frame: CGRect(x: 0, y: 0, width: 300, height: 30))
     var JSONname = ""
-    var JSONtype: [String] = []
-//    var JSONability: [String] = []
+    var jsonTypeArray: [String] = []
+    //    var JSONability: [String] = []
     var JSONsprite = ""
-    
+    var JsonTypeString = "Pokémon type "
     
     
     // Views that need to be accessible to all methods
@@ -40,8 +57,8 @@ class ViewController : UIViewController {
             if let structure = json as? [String : AnyObject] {
                 
                 if let name = (structure["name"]){
-                JSONname = name as! String
-                print("The Pokémon's name is", name)
+                    JSONname = name as! String
+                    print("The Pokémon's name is", name)
                 }
                 
                 if let types = (structure["types"]) as? [AnyObject]{
@@ -52,7 +69,7 @@ class ViewController : UIViewController {
                             if let typeName = (typeDetails["type"]) as? [String : AnyObject]{
                                 
                                 if let typename = (typeName["name"]){
-                                    JSONtype += [typename as! String]
+                                    jsonTypeArray += [typename as! String]
                                     
                                     print (typename, terminator:"")
                                     
@@ -63,12 +80,12 @@ class ViewController : UIViewController {
                         
                     }
                     print (" type")
-
-                        
-                    }
+                    
+                    
+                }
                 
-                    
-                    
+                
+                
                 
                 if let abilities = structure["abilities"] as? [AnyObject]{
                     print("This Pokémon's abilities are", terminator: " ")
@@ -78,7 +95,7 @@ class ViewController : UIViewController {
                         if let abilityDetail = ability as? AnyObject{
                             if let abilityName = abilityDetail["ability"] as? [String : AnyObject]{
                                 if let abilityname = (abilityName["name"]){
-//                                    JSONability[i] = abilityname as! String
+                                    //                                    JSONability[i] = abilityname as! String
                                     i += 1
                                     print(abilityname, terminator:" ")
                                     
@@ -96,13 +113,13 @@ class ViewController : UIViewController {
                 if let sprites = structure as? [String : AnyObject] {
                     
                     if let sprite = sprites["sprites"] as? [String : AnyObject] {
-
+                        
                         if let front = sprite["front_default"]{
                             print("Default sprite front")
                             print(front)
                         }
                         print("Default sprite back")
-                            if let back = sprite["back_default"]{
+                        if let back = sprite["back_default"]{
                             print(back)
                         }
                         if let frontShiny = sprite["front_shiny"]{
@@ -116,19 +133,24 @@ class ViewController : UIViewController {
                     }
                     
                 }
-
+                
             }
             
-
+            
             // Now we can update the UI
             // (must be done asynchronously)
             dispatch_async(dispatch_get_main_queue()) {
                 
                 self.jsonName.text = self.JSONname
-                self.jsonType.text = self.JSONtype[1]
-            
-                            }
-            
+//                var JsonTypeString = "Pokémon type "
+                
+//                self.JsonTypeString += self.jsonTypeArray[0]
+//                if (self.jsonTypeArray.count > 1){
+//                    self.JsonTypeString += self.jsonTypeArray[1]
+//                }
+//                self.jsonType.text = self.JsonTypeString
+                
+            }
         } catch let error as NSError {
             print ("Failed to load: \(error.localizedDescription)")
         }
@@ -174,7 +196,7 @@ class ViewController : UIViewController {
         }
         func createURL() -> (String?){
             
-//            if let userInput = inputGiven.text{
+            //            if let userInput = inputGiven.text{
             let addr = URL + inputGiven.text! + URLend
             print(addr)
             return(addr)
@@ -203,9 +225,9 @@ class ViewController : UIViewController {
                 
             }
         }
-        
-        // Try to make a URL request object
-         else {
+            
+            // Try to make a URL request object
+        else {
             
             // The NSURL object could not be created
             print("Error: Cannot create the NSURL object.")
@@ -216,7 +238,7 @@ class ViewController : UIViewController {
     
     // This is the method that will run as soon as the view controller is created
     override func viewDidLoad() {
-
+        
         // Sub-classes of UIViewController must invoke the superclass method viewDidLoad in their
         // own version of viewDidLoad()
         super.viewDidLoad()
@@ -274,8 +296,8 @@ class ViewController : UIViewController {
         // add text box
         let UserInput = UILabel()
         
-
-
+        
+        
         // Set the label text and appearance
         UserInput.text = "Pokédex#"
         UserInput.font = UIFont.systemFontOfSize(24)
@@ -304,7 +326,7 @@ class ViewController : UIViewController {
         view.addSubview(inputGiven)
         
         
-
+        
         
         /*
          * Layout all the interface elements
@@ -322,9 +344,9 @@ class ViewController : UIViewController {
             "getData": getData,
             "UserInput": UserInput,
             "inputField": inputGiven,
-//            "type": JSONtype,
-//            "ability": JSONability
-            ]
+//            "type": jsonType,
+            //            "ability": JSONability
+        ]
         
         // Define the vertical constraints
         let verticalConstraints = NSLayoutConstraint.constraintsWithVisualFormat(
@@ -337,7 +359,15 @@ class ViewController : UIViewController {
         allConstraints += verticalConstraints
         
         // Activate all defined constraints
+        jsonName.centerHorizontallyInSuperview()
+        getData.centerHorizontallyInSuperview()
+        UserInput.centerHorizontallyInSuperview()
+        inputGiven.centerHorizontallyInSuperview()
+
+
         NSLayoutConstraint.activateConstraints(allConstraints)
+        
+        
         
     }
     
